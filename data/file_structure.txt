@@ -1,0 +1,18 @@
+Enterprise_Meeting_Summarizer/
+├── app/                # Streamlit UI and Main Application
+│   └── Meeting_summary.py
+├── core/               # Heavy-lifting processing engines
+│   └── merger_engine.py
+├── utils/              # Helper scripts and tools
+│   ├── logs.py
+│   └── ngrok_launcher.py
+├── scripts/            # Standalone test/utility scripts
+│   ├── run_diarization.py
+│   └── run_transcription.py
+├── data/               # All Inputs and Outputs
+│   ├── test_meeting.wav
+│   └── final_transcript.txt
+├── .env                # Project Environment Variables
+├── .gitignore          # Git exclusion rules
+├── README.md           # Documentation
+└── requirements.txt    # Dependencies

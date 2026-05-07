@@ -1,0 +1,14 @@
+TOTAL EXPECTED CHUNKS: 1
+TOTAL CAPTURED CHUNKS: 1
+========================================
+
+--- CHUNK 1 ---
+*   Sustainability framework focuses on the "Social part" and "Environment part."
+*   Kiran Hospital received sustainability consulting.
+*   India targeted 20-30 countries to reduce non-renewable energy consumption by 50% by 2030 (revised target set in 2019).
+*   Developed countries are expected to fund the targets for developing countries.
+*   The main component of climate action is reducing gas emissions (CFC replaced by environmentally friendly gases).
+*   Companies are increasingly reporting ESG data (e.g., ESC was nominated as a top 1000 company in 2022).
+*   Proposal to create an authority board and certification board for ESG/sustainability in the next six months.
+*   Focus on data collection and compliance for investors and listing requirements.
+
