@@ -40,7 +40,7 @@ except Exception as e:
 def run_streamlit():
     # Use the specific python from the virtual environment
     python_exe = os.path.join(ROOT_DIR, "Enterprise", "Scripts", "python.exe")
-    cmd = [python_exe, "-m", "streamlit", "run", APP_PATH, "--server.port", "8501", "--server.headless", "true"]
+    cmd = [python_exe, "-m", "streamlit", "run", APP_PATH, "--server.port", "8501", "--server.headless", "true", "--server.fileWatcherType", "none"]
     subprocess.run(cmd)
 
 thread = threading.Thread(target=run_streamlit, daemon=True)
