@@ -3,20 +3,10 @@ TOTAL CAPTURED CHUNKS: 1
 ========================================
 
 --- CHUNK 1 ---
-*   **Supplier Selection & Standards:**
-    *   Suppliers are now chosen based on easy ratings rather than just financials.
-    *   Companies should align with sustainability standards like ISO 2040404 (sustainable procurement).
-    *   Companies monitor suppliers periodically based on sustainability.
-*   **Supply Chain & Risk:**
-    *   There is a need for companies (major/master companies) to track and verify their suppliers.
-    *   Demonstrating supply chain sustainability is important for market proof (e.g., proving to BSE that the supply chain is managed).
-    *   Lack of vendor management poses risks similar to cybersecurity concerns (vendors not being compromised).
-*   **Regulatory & Environmental Policy (EU Focus):**
-    *   The European Union drafted legislation requiring outside goods to disclose quarterly emission amounts.
-    *   The specific mechanism discussed is the Carbon Border Adjustment Mechanism (CBAM).
-    *   For products entering the EU, the EU will study emissions data from January 2026 to December 2026 to set caps for each product.
-    *   This process involves calculating emissions from suppliers bringing products into the EU boundary.
-    *   The reporting period for data collection is specified as January 2026 to December 2026.
-    *   The transition timeline for data collection and reporting is tied to October 20th, with data covering the two years prior and the current period.
-    *   Products are bifurcated based on HSN codes and CN codes to determine allowed emission limits.
+*   **Jay Shetty (Podcaster):** Communication is about what lands, not what is said or meant.
+*   **Jay Shetty (Podcaster):** Harvard research suggests people overestimate how clearly they communicate by over 40%.
+*   **Jay Shetty (Podcaster):** Effective communication requires principles grounded in psychology, focusing on clarity and protecting relationships rather than winning arguments.
+*   **Tom (Spoiler):** Describes family background: father was a comedian, mother was a photographer, resulting in parents always being home.
+*   **Tom (Spoiler):** Expresses a dream of fatherhood and wanting to put work to bed to be present as a dad.
+*   **Tom (Spoiler):** Values feeling connected and safe within the family unit.
 

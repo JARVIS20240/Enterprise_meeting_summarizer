@@ -78,6 +78,104 @@ def transcribe_audio(wav_path: str, live_status_container=None):
     diarization_segments = data
     logging.info("Diarization complete. VRAM is 100% cleanly flushed by OS.")
 
+    # --- PHASE A.5: TIERED CONFIDENCE MERGE ---
+    if live_status_container:
+        live_status_container.markdown("**Comparing Voice Biometrics with Database... (Phase A.5)**")
+        
+    speaker_map = {}
+    
+    try:
+        import chromadb
+        from core.voice_biometrics import VoiceEmbeddingEngine
+        
+        DATA_DIR = BASE_DIR / "data"
+        chroma_client = chromadb.PersistentClient(path=str(DATA_DIR / "chroma_db"))
+        collection = chroma_client.get_or_create_collection(
+            name="employee_voices_v2",
+            metadata={"hnsw:space": "cosine"}
+        )
+        
+        if collection.count() > 0:
+            logging.info(f"Biometrics DB found {collection.count()} enrolled profiles. Cross-referencing...")
+            
+            # Initialize VoiceEmbeddingEngine ONCE to prevent GIL freezing and Streamlit disconnects
+            engine = VoiceEmbeddingEngine()
+            
+            # Group all segments by speaker
+            speaker_segments_map = {}
+            for track in diarization_segments:
+                spk = track["speaker"]
+                duration = track["end"] - track["start"]
+                if spk not in speaker_segments_map:
+                    speaker_segments_map[spk] = []
+                speaker_segments_map[spk].append({"start": track["start"], "end": track["end"], "duration": duration})
+            
+            # Sort and take top 3 segments per speaker
+            for spk, segments in speaker_segments_map.items():
+                segments.sort(key=lambda x: x["duration"], reverse=True)
+                top_segments = segments[:3]
+                
+                best_distance = float('inf')
+                best_match = None
+                
+                for i, seg in enumerate(top_segments):
+                    temp_wav = str(DATA_DIR / f"temp_golden_{spk}_{i}.wav")
+                    start = seg["start"]
+                    end = seg["end"]
+                    
+                    # CRITICAL: Force 16kHz mono audio for accurate Pyannote extraction
+                    subprocess.run(["ffmpeg", "-y", "-ss", str(start), "-to", str(end), "-i", wav_path, "-ac", "1", "-ar", "16000", temp_wav], 
+                                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    
+                    try:
+                        if os.path.exists(temp_wav):
+                            vec = engine.extract(temp_wav)
+                            
+                            # Query ChromaDB directly with this single vector
+                            results = collection.query(
+                                query_embeddings=[vec],
+                                n_results=1
+                            )
+                            
+                            if results['distances'] and len(results['distances'][0]) > 0:
+                                dist = results['distances'][0][0]
+                                if dist < best_distance:
+                                    best_distance = dist
+                                    meta = results['metadatas'][0][0]
+                                    best_match = {
+                                        "name": meta.get("name", "Unknown"),
+                                        "role": meta.get("role", "")
+                                    }
+                    except Exception as e:
+                        logging.error(f"Error extracting embedding for {spk} segment {i}: {e}")
+                    finally:
+                        if os.path.exists(temp_wav):
+                            os.remove(temp_wav)
+                
+                # Evaluate the best score across all 3 segments
+                if best_match:
+                    name = best_match['name']
+                    role = best_match['role']
+                    
+                    # Adjusted Tiered Logic for Cosine Distance
+                    if best_distance < 0.3:
+                        speaker_map[spk] = f"{name} ({role})" if role else name
+                        logging.info(f"High Match: {spk} -> {name} (Cosine Dist: {best_distance:.4f})")
+                    elif best_distance < 0.45:
+                        speaker_map[spk] = f"Likely {name} (Unverified)"
+                        logging.info(f"Medium Match: {spk} -> {name} (Cosine Dist: {best_distance:.4f})")
+                    else:
+                        speaker_map[spk] = f"Guest ({spk})"
+                        logging.info(f"Low/No Match for {spk}. Closest dist: {best_distance:.4f}")
+                else:
+                    speaker_map[spk] = f"Guest ({spk})"
+    except Exception as e:
+        logging.error(f"Tiered Confidence Merge failed: {e}")
+    finally:
+        # Guarantee VRAM protection before Whisper
+        if 'engine' in locals():
+            engine.cleanup()
+
     # --- PHASE B: TRANSCRIPTION (WHAT & WHEN) ---
     logging.info("Starting Phase B: Faster-Whisper Transcription...")
     if live_status_container:
@@ -127,7 +225,7 @@ def transcribe_audio(wav_path: str, live_status_container=None):
         
         for track in diarization_segments:
             if track["start"] <= segment_center <= track["end"]:
-                assigned_speaker = track["speaker"]
+                assigned_speaker = speaker_map.get(track["speaker"], f'Guest ({track["speaker"]})')
                 break
         
         text = segment.text.strip()

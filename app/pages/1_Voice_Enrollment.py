@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 if str(BASE_DIR) not in sys.path:
     sys.path.append(str(BASE_DIR))
 
-from core.voice_biometrics import extract_voice_embedding
+from core.voice_biometrics import VoiceEmbeddingEngine
 
 # Anchor the database to the data folder
 DATA_DIR = BASE_DIR / "data"
@@ -17,7 +17,10 @@ DATA_DIR.mkdir(exist_ok=True)
 
 # Initialize a local persistent ChromaDB client
 chroma_client = chromadb.PersistentClient(path=str(DATA_DIR / "chroma_db"))
-collection = chroma_client.get_or_create_collection(name="employee_voices")
+collection = chroma_client.get_or_create_collection(
+    name="employee_voices_v2",
+    metadata={"hnsw:space": "cosine"}
+)
 
 st.set_page_config(page_title="Voice Enrollment", page_icon=":microphone:", layout="centered")
 
@@ -76,8 +79,10 @@ if st.button(":floppy_disk: Save Biometric Profile", type="primary", use_contain
                 with open(temp_path, "wb") as f:
                     f.write(audio_file.read())
                 
-                # Extract the mathematical fingerprint
-                vector = extract_voice_embedding(str(temp_path))
+                # Extract the mathematical fingerprint using the newly refactored Engine
+                engine = VoiceEmbeddingEngine()
+                vector = engine.extract(str(temp_path))
+                engine.cleanup()
                 
                 # Upsert into ChromaDB
                 employee_id = emp_name.strip().lower().replace(" ", "_")
