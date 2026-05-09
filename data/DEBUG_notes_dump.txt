@@ -1,83 +1,22 @@
-TOTAL EXPECTED CHUNKS: 4
-TOTAL CAPTURED CHUNKS: 4
+TOTAL EXPECTED CHUNKS: 1
+TOTAL CAPTURED CHUNKS: 1
 ========================================
 
 --- CHUNK 1 ---
-*   **Product/Market Status:** Marketing/water testing is ongoing; feedback will be integrated.
-*   **Stakeholders Present:** Mr. Huma (Sales), Mr. Sagar (Development), IAN (Development).
-*   **Risk/Product Visibility:** Mr. Amarim has seen 3 to 4 products.
-*   **Risk Management Framework (SPEAKER_05):**
-    *   Proposed 4 principles for risk management.
-    *   Concept of total risk and creating dedicated risk departments.
-    *   Risk scale defined as 0 to 40 (minimum 0, maximum 40).
-    *   Risk calculation uses Fair FDIR standards (e.g., IAS 21000).
-*   **System Goal:** The system should provide decision-making ability to manage risk.
-*   **Data Structure/Lifecycle (SPEAKER_01):** Risk data should have a lifecycle, status tracking, and functional impact assessment (low/high, commercial impact).
-*   **Risk Mitigation Mapping:** A "risk-leap map" exists, relating before/after mitigation stages.
-*   **Data Synchronization Challenge (SPEAKER_04/SPEAKER_05):** Need a mechanism for continuous synchronization of evidence (push/pull data) across different systems.
-*   **Long-Term Solution:** Focus on establishing a continuous synchronization mechanism (integration/API calls) for evidence.
-*   **Short-Term Action/Recommendation (SPEAKER_01):** Create a system for unstructured data input (questioners) to pull data, structure it, and enumerate it into the main system.
-*   **Timeline Context:** The situation is expected to intensify in six months.
-
---- CHUNK 2 ---
-*   **Risk Calculation & Scoring:**
-    *   SPEAKER_01 challenges the current scoring system and proposes building a new algorithm, stating the current scoring is not making sense over 5 years.
-    *   SPEAKER_04 notes that the risk calculation (Hamanage) involves three impacts: functional, informational, and recovery impact, based on frequency of impact (1x, 2x, 10x).
-    *   SPEAKER_04 asserts that the current formula is industry standard and can be adjusted, and suggests weighting metrics based on organizational risk (e.g., increasing weightage for impact).
-    *   The proposed methodology allows mapping risks to specific assets, vendors, and data types (e.g., mapping a data breach risk to a specific server/vendor).
-
-*   **Asset and Vendor Management:**
-    *   The current process for tracking assets and vendors relies on manual methods.
-    *   There is a need for automation, specifically asset discovery via network scanning to identify connected assets.
-    *   SPEAKER_01 suggests leveraging existing systems, referencing Service Now as a potential source for asset and incident management data.
-    *   The proposed solution involves importing asset/vendor lists (e.g., Excel sheets) and future deployment of a discovery feature to find assets from the network.
-
-*   **Automation and Implementation:**
-    *   Automating vendor/asset management is required to address resistance during onboarding.
-    *   SPEAKER_01 emphasizes that the focus should be on building the necessary framework before applying automation.
-    *   The process should involve building a "shell" first, followed by automation.
-
-*   **Cost and Mitigation Strategy:**
-    *   A potential annual budget can be established by mapping risk to a defined budget range based on tolerance levels.
-    *   The cost of risk mitigation involves four actions: Mitigation, Acceptance, Transfer, and Avoid.
-    *   The prediction based on AI modeling shows that if risk is avoided, there is an 80% chance of the risk not returning in the next year.
-    *   The final decision-making process involves setting the amount of items in the risk settings and using available metrics to determine cost.
-
---- CHUNK 3 ---
-*   **Vendor/Risk Transfer Logic:**
-    *   External vendors help mitigate risk.
-    *   Transferring risk (e.g., choosing Ground Strike Falcon Complete) means transferring risk to the vendor rather than purchasing a product.
-    *   Purchasing a product (e.g., Palo Alto) means managing the risk in-house.
-*   **Costing and Probability:**
-    *   The financial purchase cost is $530,500K with an 80% probability of occurrence.
-    *   Costing is complex; the team needs to improve pricing and vendor accuracy based on market trends.
-*   **Proposed Strategy/Model:**
-    *   The team is working on a matrix model using KPEX, OPEX, probability, and residual risk.
-    *   The model is currently trained on 50-60% to 60% use cases.
-    *   The proposed approach should focus on clarity, showing cost versus benefit (e.g., dollar amount vs. benefit).
-*   **Product Development/Future Features:**
-    *   Plan to develop a search bar/matrix tool for cost estimation based on specific requirements.
-    *   Goal is to allow users to dictate results (like ChatGPT) and dictate pricing for budget optimization.
-*   **Legal/Contractual Concerns:**
-    *   Need to ensure legal clarity regarding pricing, ownership, and vendor names to ensure the information is not misrepresented and to ensure legal safety (e.g., avoiding misrepresenting vendor comments).
-*   **Service Model Recommendation (Actionable Insight):**
-    *   The team should focus on a service model rather than a product model, especially targeting large organizations (who use ERPs) to gain competitive advantage.
-*   **Adoption Strategy:**
-    *   Implementation requires a full market adoption process.
-    *   The rollout timeline mentioned is March 6th for a single product, but full market adoption is required.
-*   **Operational Challenges:**
-    *   The biggest challenge is implementation across multiple departments.
-    *   The system must be easy for IT teams to adopt (e.g., finance teams only need to answer assigned risks).
-
---- CHUNK 4 ---
-*   **Platform/Workflow:** A risk officer platform with sub-user portals is discussed.
-*   **System Design:** Discussion on implementing a module (question-answer vs. login/email).
-*   **Service Model:** Proposal for "Risk management as a service."
-*   **Sponsor/Department:** The Sanjit Kudu department is mentioned as the contributing board/sponsor.
-*   **Vendor Risk:** Concern raised that vendors are not providing assurance, requiring the organization to fulfill vendor risk data and questions.
-*   **Data Requirement:** Need to retain and provide data/responses to viewers (vendors).
-*   **Feature Suggestion:** Proposal to include "risk aging" as a feature due to lack of departmental response.
-*   **Next Steps/Meeting:** SPEAKER_04 requested availability for the next session regarding GAP and technical aspects (back end, front end).
-*   **Follow-up:** SPEAKER_01 will inform SPEAKER_04 about the next meeting availability.
-*   **Action Item (Implied):** Technical aspects (back end, front end) need to be done with the development team.
+*   **Supplier Selection & Standards:**
+    *   Suppliers are now chosen based on easy ratings rather than just financials.
+    *   Companies should align with sustainability standards like ISO 2040404 (sustainable procurement).
+    *   Companies monitor suppliers periodically based on sustainability.
+*   **Supply Chain & Risk:**
+    *   There is a need for companies (major/master companies) to track and verify their suppliers.
+    *   Demonstrating supply chain sustainability is important for market proof (e.g., proving to BSE that the supply chain is managed).
+    *   Lack of vendor management poses risks similar to cybersecurity concerns (vendors not being compromised).
+*   **Regulatory & Environmental Policy (EU Focus):**
+    *   The European Union drafted legislation requiring outside goods to disclose quarterly emission amounts.
+    *   The specific mechanism discussed is the Carbon Border Adjustment Mechanism (CBAM).
+    *   For products entering the EU, the EU will study emissions data from January 2026 to December 2026 to set caps for each product.
+    *   This process involves calculating emissions from suppliers bringing products into the EU boundary.
+    *   The reporting period for data collection is specified as January 2026 to December 2026.
+    *   The transition timeline for data collection and reporting is tied to October 20th, with data covering the two years prior and the current period.
+    *   Products are bifurcated based on HSN codes and CN codes to determine allowed emission limits.
 
