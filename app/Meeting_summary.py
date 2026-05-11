@@ -134,8 +134,13 @@ def call_ollama_stream(model_name: str, prompt: str, keep_alive: str = "5m", con
 def process_transcript(transcript: str, progress_bar, status_text, language: str) -> str:
     logging.info("Starting process_transcript map-reduce engine...")
     
-    splitter = RecursiveCharacterTextSplitter(chunk_size=20000, chunk_overlap=100)
-    chunks = splitter.split_text(transcript)
+    # --- STEP 1: CHUNKING (MAP PHASE) ---
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=25000, 
+        chunk_overlap=100,
+        separators=["\n\n", "\n", " ", ""]
+    )
+    chunks = text_splitter.split_text(transcript)
     total_chunks = len(chunks)
 
     extracted_notes = []

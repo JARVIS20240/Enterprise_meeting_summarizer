@@ -116,7 +116,7 @@ def transcribe_audio(wav_path: str, live_status_container=None):
             
             for spk, segments in speaker_segments_map.items():
                 segments.sort(key=lambda x: x["duration"], reverse=True)
-                top_segments = segments[:3]
+                top_segments = segments[:1]
                 
                 for i, seg in enumerate(top_segments):
                     temp_wav = str(DATA_DIR / f"temp_golden_{spk}_{i}.wav")
