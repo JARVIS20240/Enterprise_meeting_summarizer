@@ -464,7 +464,6 @@ def main():
             filename_display = os.path.basename(local_path)
 
     if audio_path_to_process:
-        speaker_names_input = st.text_input("Optional: Enter Speaker Names (comma-separated, e.g., Alice, Bob):", key="speaker_names")
         
         if st.session_state.current_file != filename_display:
             st.session_state.transcript = None
@@ -490,11 +489,6 @@ def main():
                 # This calls your new Engine directly!
                 transcript, duration, language = transcribe_audio(wav_path, live_status_container=live_text)
                 
-                # Apply Custom Speaker Mapping
-                if st.session_state.speaker_names:
-                    custom_names = [n.strip() for n in st.session_state.speaker_names.split(",")]
-                    for idx, name in enumerate(custom_names):
-                        transcript = transcript.replace(f"SPEAKER_{idx:02d}", name)
                 
                 st.session_state.transcript = transcript
                 st.session_state.duration = duration

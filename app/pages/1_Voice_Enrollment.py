@@ -36,14 +36,28 @@ st.info(f"**Total Enrolled Employees in Database:** {total_enrolled}")
 
 st.divider()
 
+# Handle Redirects from Database Manager
+if 'edit_name' in st.session_state:
+    st.session_state.widget_emp_name = st.session_state['edit_name']
+    del st.session_state['edit_name']
+if 'edit_role' in st.session_state:
+    st.session_state.widget_emp_role = st.session_state['edit_role']
+    del st.session_state['edit_role']
+if 'edit_original_id' in st.session_state:
+    st.session_state['current_edit_id'] = st.session_state['edit_original_id']
+    del st.session_state['edit_original_id']
+
 col1, col2 = st.columns(2)
 with col1:
-    emp_name = st.text_input("Employee Full Name", placeholder="e.g., John Smith")
+    emp_name = st.text_input("Employee Full Name", key="widget_emp_name", placeholder="e.g., John Smith")
 with col2:
-    emp_role = st.text_input("Job Role", placeholder="e.g., Lead Architect")
+    emp_role = st.text_input("Job Role", key="widget_emp_role", placeholder="e.g., Lead Architect")
 
 st.markdown("### Audio Sample")
 st.info("Please provide a 30 to 60-second clear voice sample of the employee speaking.")
+
+with st.expander("📝 Need a script to read? Click here"):
+    st.info("The sun shines brightly in the clear blue sky, warming the quiet town below. A gentle breeze rustles the green leaves on the tall oak trees. Dogs happily chase tennis balls across the soft grass of the local park. It is a perfect afternoon to sit outside, read a good book, and enjoy a warm cup of coffee.")
 
 input_method = st.radio("Select Sample Source:", ["Upload Audio File", "Record from Microphone"], horizontal=True)
 
@@ -126,6 +140,18 @@ if st.button(":floppy_disk: Save Biometric Profile", type="primary", use_contain
                 
                 # 5. Upsert into ChromaDB
                 employee_id = safe_name
+                
+                # If we are updating an existing profile and the name (ID) changed, delete the old one
+                if "current_edit_id" in st.session_state and st.session_state["current_edit_id"]:
+                    old_id = st.session_state["current_edit_id"]
+                    if old_id != employee_id:
+                        try:
+                            collection.delete(ids=[old_id])
+                        except Exception:
+                            pass
+                    # Clear the edit state so future saves don't delete this ID
+                    del st.session_state["current_edit_id"]
+
                 collection.upsert(
                     ids=[employee_id],
                     embeddings=[vector],
