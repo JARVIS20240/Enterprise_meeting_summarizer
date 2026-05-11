@@ -1,12 +1,66 @@
-TOTAL EXPECTED CHUNKS: 1
-TOTAL CAPTURED CHUNKS: 1
+TOTAL EXPECTED CHUNKS: 5
+TOTAL CAPTURED CHUNKS: 5
 ========================================
 
 --- CHUNK 1 ---
-*   **Jay Shetty (Podcaster):** Communication is about what lands, not what is said or meant.
-*   **Jay Shetty (Podcaster):** Harvard research suggests people overestimate how clearly they communicate by over 40%.
-*   **Jay Shetty (Podcaster):** Effective communication requires principles grounded in psychology, focusing on clarity and protecting relationships rather than winning arguments.
-*   **Tom (Spoiler):** Describes family background: father was a comedian, mother was a photographer, resulting in parents always being home.
-*   **Tom (Spoiler):** Expresses a dream of fatherhood and wanting to put work to bed to be present as a dad.
-*   **Tom (Spoiler):** Values feeling connected and safe within the family unit.
+*   **Marketing/Product Status:** Marketing and water testing are ongoing; feedback will be integrated.
+*   **Stakeholder Alignment:** Subject-A has a touch base with Shakir sir and has meetings scheduled with Amarim (weekly meetings).
+*   **Team Representation:** Attendees include Mr. Huma (Sales), Mr. Sagar (Development), and IAN (Development).
+*   **Product Review:** Amarim has reviewed 3 to 4 products.
+*   **Core Focus (Speaker 01/05):** Discussion centered on ID security, financial risk, and the necessity of robust risk management, especially within the government context.
+*   **Risk Management System Concept:** Proposed system aims to provide decision-making ability for managing risk, moving beyond simple risk registration.
+*   **Risk Framework:** Introduction of a concept for total risk assessment, including risk mapping (scale of 0 to 40).
+*   **Risk Register Requirement:** Need for systems to maintain risk registers and facilitate action based on risk.
+*   **Risk Prioritization:** Emphasize getting risk information *before* mitigation efforts.
+*   **Data Integration/Technology:** Proposed solutions involve using API calling for continuous data synchronization and integration across systems (e.g., vendor, product, user data).
+*   **Knowledge Base Strategy:** Suggestion to create a knowledge base by gathering and structuring documents (policy, check documents, reports) to facilitate risk decisions.
+*   **Action/Future Steps:** Focus should shift towards long-term solutions; research into methods for structured data input (e.g., questionnaires) to gather data from customers.
+
+--- CHUNK 2 ---
+*   **Data Flow & Information:** SPEAKER_01 stated that the right information leads to good support; information was uploaded, and draft items were generated.
+*   **Risk Calculation Methodology (Subject-A):** Risks are calculated based on functional impact, informational impact, and recovery. Frequency is calculated using E-Ris (10X, 1X, 2X) and RAN (2X).
+*   **Risk Mapping:** Risks should be mapped against assets, vendors, and data types.
+*   **Asset Discovery Pipeline:** The current process involves importing Excel sheets for assets/vendors, with a future pipeline for a discovery feature to scan the network.
+*   **Asset Discovery Mechanism:** Asset discovery involves running code to scan the network to identify connected assets.
+*   **Data Source Preference:** Preference is given to pulling data from existing structured systems (e.g., ServiceNow) rather than manual entry.
+*   **Vendor Management:** The process involves mapping risks to assets, vendors, and data.
+*   **Vendor Flexibility:** The system should be flexible based on organizational requirements (e.g., increasing weightage for specific risk factors).
+*   **Asset/Vendor Scale:** The vendor relationship is considered on a 0-4K scale.
+*   **Gira Integration:** The Gira system correlates bugs and risks, suggesting a direct relationship where "bug has a light cycle" and "risk has a light cycle."
+*   **System Feedback:** The team leader (Subject-A) noted that the current approach involves building a "shell" first, followed by analysis and evidence.
+*   **Future Steps:** Subject-A will discuss the findings in the next session.
+
+--- CHUNK 3 ---
+*   **Vendor Standards/Risk:** Discussion focused on vendor standards (0-4K scale, Indicest), formula risk, and the need to validate products before use (USP).
+*   **Risk Mitigation Costing:** Cost calculation based on mitigation strategies (avoid, transfer, mitigate). Cost is dependent on the actions taken and risk reduction percentages.
+*   **AI Modeling and Prediction:** The team uses AI/Gemini for cost analysis. Prediction shows an 85-35% outcome, and there is an 80% chance the risk will be repeated in the next year if not mitigated.
+*   **Budgeting:** An annual budget is used for costing, mapping risk titles (negligible, high, low, critical) to budget ranges.
+*   **Decision Making Framework:** The group agreed on the need for a cost X benefit framework (quadrant) to guide decisions.
+*   **Vendor Risk:** External vendors are identified as those who can help mitigate risks.
+*   **Risk Clubbing:** It is recommended to club multiple risks together as they are often not mutually exclusive.
+*   **Future Tool Planning:** Planning to develop a search bar type tool that allows users to dictate search criteria (e.g., impact) and pricing, similar to a customized GPT.
+*   **Action Item (Costing):** The team will work to improve cost estimation and vendor pricing based on market trends.
+
+--- CHUNK 4 ---
+*   **Market Strategy & Commission:** Guest (SPEAKER_01) suggested requiring a few percent commission from vendors to push names, addressing the risk of misrepresenting names.
+*   **Market Risk:** The discussion framed the proposed approach as a kind of market risk.
+*   **Partner Integration:** Guest (SPEAKER_01) proposed connecting partner companies to a platform where partners can be onboarded and referenced, allowing the platform to charge for onboarding or sales.
+*   **Legal/Data Risk:** Guest (SPEAKER_01) warned about legal risk, noting that public data (like hacking comments) must be vetted and acknowledged, and mentioned the need for safety/compliance ("safe car").
+*   **Business Growth Assumption:** Guest (SPEAKER_01) projected that achieving quick results would lead to 100 customers, each having 50 days, 1000 risk items, and vendors.
+*   **Risk Scope Limitation:** Guest (SPEAKER_01) suggested limiting the scope of the product to IT and infrastructure/application risks, noting that financial risk involves 100 times more complexity (e.g., 100 products).
+*   **Risk Categories:** Potential risk areas discussed include IT, infrastructure, application, project, environmental, and ESG.
+*   **Market Segmentation:** Guest (SPEAKER_01) recommended targeting medium-sized organizations ("meta size organization") rather than large organizations, noting that large organizations often use internal ERPs.
+*   **Service Model Recommendation:** The team discussed a service model. Guest (SPEAKER_01) suggested a subscription model based on user/seat basis.
+*   **User Interface/Workflow:** The team discussed the need for a user interface, suggesting a chat option for risk assessment.
+*   **Vendor Assurance Issue:** Subject-A (Team\_leader) noted that partners lacked assurance regarding vendor protection, prompting the need for the vendor to provide answers to the risk questions.
+*   **Action Item (Risk Aging):** Subject-A (Team\_leader) highlighted "risk aging" as a critical point, noting that departments have not responded to it, suggesting a need for notifications or actions regarding SLA failures.
+*   **Next Steps:** Subject-A (Team\_leader) requested a follow-up session to review achievements and the partner portal.
+
+--- CHUNK 5 ---
+*   **Feedback Discrepancy:** Subject-A (Team_leader) noted that feedback from different perspectives (e.g., risk costing vs. technical details) differs.
+*   **Technical Scope:** The discussion covered technical aspects of the backend and frontend, which the team can handle with the development team.
+*   **Next Meeting:** Subject-A asked Guest (SPEAKER_01) for availability to schedule the next meeting (this week or next week).
+*   **Travel Constraint:** Subject-A mentioned that Mr. Ajit is likely traveling to North America in June.
+*   **Communication:** Subject-A attempted to establish a common group (WhatsApp) but encountered issues sharing contact information.
+*   **Action Item (Information Request):** Subject-A requested that the other party provide necessary documents or information.
 

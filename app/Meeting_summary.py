@@ -212,6 +212,43 @@ def process_transcript(transcript: str, progress_bar, status_text, language: str
     Extracted Shorthand Notes:
     {combined_notes}
     """
+
+#     reduce_prompt = f"""
+#     Synthesize the extracted shorthand notes into a final, professional executive report.
+
+#     CRITICAL RULES:
+#     1. ANTI-HALLUCINATION: You must ONLY use the information provided in the "Extracted Shorthand Notes" below. Do NOT invent fake Service Level Agreements (SLAs), threat levels, or names.
+#     2. STRICT SPEAKER ATTRIBUTION: You MUST explicitly attribute quotes, decisions, and discussion points to the exact names provided in the transcript.
+#     3. NO GENERIC LABELS: Never use phrases like "One speaker noted," "The individual stated," or "They discussed." You must use their actual names.
+#     4. ACTION ITEMS (STRICT EXTRACTION): You must ONLY extract future tasks, deliverables, or corporate commitments that were explicitly agreed upon by the speakers in the transcript. DO NOT turn past stories, personal goals, or general life advice into Action Items. If no explicit future corporate tasks were assigned, you must output exactly: "No specific action items were assigned." Do NOT invent or generate tasks.
+#     5. SUGGESTED TOPICS FOR FUTURE MEETINGS (AI GENERATION): You must act as a strategic consultant. Analyze the highly relevant themes of this meeting and GENERATE 2 to 3 logical, strategic follow-up topics that the team should explore in their next meeting to progress the conversation.
+#     6. LANGUAGE: Write the final executive report strictly in English. Do not translate to English unless the notes are in English.
+
+#     You MUST copy the EXACT structure below. Fill in the information based ONLY on what actually happened in the meeting.
+
+#     Overview
+#     This meeting focused on the following areas:
+#     - [Topic 1]
+#     - [Topic 2]
+
+#     Discussion Points
+#     1. [Major Topic 1]
+#     - [Point 1]
+#     - [Point 2]
+#     2. [Major Topic 2]
+#     - [Point 1]
+
+#     Action Items
+#     1. **[Short Action Title]** - [Speaker Name or 'Team']: [Specific Task Details]
+#     2. **[Short Action Title]** - [Speaker Name or 'Team']: [Specific Task Details]
+
+#     Suggested Topics for Future Meetings
+#     - [Future Topic 1]
+#     - [Future Topic 2]
+
+#     Extracted Shorthand Notes:
+#     {combined_notes}
+# """
     exec_container = st.empty()
     logging.info("Executing executive summary generation...")
     final_summary = call_ollama_stream(EXECUTIVE_MODEL, reduce_prompt, keep_alive=0, container=exec_container)

@@ -7,6 +7,10 @@ from dotenv import load_dotenv
 # Strictly prevent silent OpenMP C++ crashes
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
+import warnings
+# Silence the deprecated torchaudio backend warning from pyannote.audio
+warnings.filterwarnings("ignore", category=UserWarning, module="pyannote.audio.core.io")
+
 # ==========================================
 # DYNAMIC PATH ANCHORING & MODEL CACHE
 # ==========================================

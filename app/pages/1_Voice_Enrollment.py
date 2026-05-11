@@ -3,6 +3,9 @@ import os
 import chromadb
 from pathlib import Path
 import sys
+import subprocess
+import json
+import logging
 
 # Ensure the core module is accessible regardless of where Streamlit was launched
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -71,35 +74,75 @@ if st.button(":floppy_disk: Save Biometric Profile", type="primary", use_contain
     elif not audio_file:
         st.error("Please provide a valid audio sample.")
     else:
-        with st.spinner(f"Extracting 512-D Biometric Vector for {emp_name}..."):
-            temp_path = DATA_DIR / "temp_enroll_sample.wav"
+        with st.spinner(f"Extracting Biometric Vector for {emp_name}..."):
+            # Unique identifiers for temporary worker files
+            safe_name = emp_name.strip().lower().replace(" ", "_")
+            temp_raw = DATA_DIR / f"raw_enroll_{safe_name}.tmp"
+            temp_wav = DATA_DIR / f"norm_enroll_{safe_name}.wav"
+            task_json = DATA_DIR / f"tasks_enroll_{safe_name}.json"
+            result_json = DATA_DIR / f"results_enroll_{safe_name}.json"
             
             try:
-                # Save the audio buffer to a temporary physical file
-                with open(temp_path, "wb") as f:
+                # 1. Save raw upload/recording buffer
+                with open(temp_raw, "wb") as f:
                     f.write(audio_file.read())
                 
-                # Extract the mathematical fingerprint using the newly refactored Engine
-                engine = VoiceEmbeddingEngine()
-                vector = engine.extract(str(temp_path))
-                engine.cleanup()
+                # 2. Normalize audio using FFMPEG (16kHz, Mono, WAV)
+                # This fixes the "Format not recognised" error for M4A/MP3 uploads
+                subprocess.run([
+                    "ffmpeg", "-y", "-i", str(temp_raw),
+                    "-ac", "1", "-ar", "16000", str(temp_wav)
+                ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+
+                if not temp_wav.exists():
+                    raise RuntimeError("FFMPEG failed to create normalized WAV file.")
+
+                # 3. Initialize tasks for the sandboxed worker
+                tasks = [{"id": "enroll_task", "path": str(temp_wav)}]
+                with open(task_json, 'w') as f:
+                    json.dump(tasks, f)
                 
-                # Upsert into ChromaDB
-                employee_id = emp_name.strip().lower().replace(" ", "_")
+                # 4. Spawn the isolated biometric worker process
+                # This prevents Streamlit from losing connection during model load
+                hf_token = os.getenv("HUGGINGFACE_TOKEN", "")
+                worker_script = str(BASE_DIR / "core" / "biometric_worker.py")
+                python_exe = sys.executable
+                cmd = [python_exe, worker_script, str(task_json), str(result_json), hf_token]
                 
+                result = subprocess.run(cmd, capture_output=True, text=True)
+                
+                if result.returncode != 0:
+                    raise RuntimeError(f"Biometric worker crashed:\n{result.stderr}")
+
+                if not result_json.exists():
+                    raise RuntimeError("Biometric worker failed to generate result file.")
+                    
+                with open(result_json, 'r') as f:
+                    res_data = json.load(f)
+                
+                vector = res_data.get("results", {}).get("enroll_task")
+                if not vector:
+                    raise RuntimeError("Biometric extraction failed (no vector returned).")
+                
+                # 5. Upsert into ChromaDB
+                employee_id = safe_name
                 collection.upsert(
                     ids=[employee_id],
                     embeddings=[vector],
                     metadatas=[{"name": emp_name.strip(), "role": emp_role.strip()}]
                 )
                 
-                # Success notification without triggering st.rerun()
-                st.success(f"Profile saved successfully! Voice biometric profile for **{emp_name}** ({emp_role}) is now securely stored in ChromaDB.")
+                st.success(f"Profile saved successfully! Voice biometric profile for **{emp_name}** ({emp_role}) is now securely stored.")
                 
             except Exception as e:
                 st.error(f"Error during biometric extraction or database storage: {e}")
+                logging.error(f"Enrollment Error: {str(e)}")
                 
             finally:
-                # Delete the temporary staging file from the hard drive
-                if temp_path.exists():
-                    os.remove(temp_path)
+                # 6. Comprehensive cleanup of all temporary worker files
+                for p in [temp_raw, temp_wav, task_json, result_json]:
+                    if p.exists():
+                        try:
+                            os.remove(p)
+                        except:
+                            pass

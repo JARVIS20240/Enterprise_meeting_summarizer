@@ -6,6 +6,10 @@ from dotenv import load_dotenv
 # This strictly prevents the silent OpenMP C++ crash on Windows
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
+import warnings
+# Silence the deprecated torchaudio backend warning from pyannote.audio
+warnings.filterwarnings("ignore", category=UserWarning, module="pyannote.audio.core.io")
+
 # ==========================================
 # 1. DYNAMIC PATH ANCHORING & MODEL CACHE
 # ==========================================
@@ -98,10 +102,10 @@ def transcribe_audio(wav_path: str, live_status_container=None):
         if collection.count() > 0:
             logging.info(f"Biometrics DB found {collection.count()} enrolled profiles. Cross-referencing...")
             
-            # Initialize VoiceEmbeddingEngine ONCE to prevent GIL freezing and Streamlit disconnects
-            engine = VoiceEmbeddingEngine()
+            # Step 1: Collect all segments to extract
+            extraction_tasks = []
+            task_to_speaker = {}
             
-            # Group all segments by speaker
             speaker_segments_map = {}
             for track in diarization_segments:
                 spk = track["speaker"]
@@ -110,71 +114,97 @@ def transcribe_audio(wav_path: str, live_status_container=None):
                     speaker_segments_map[spk] = []
                 speaker_segments_map[spk].append({"start": track["start"], "end": track["end"], "duration": duration})
             
-            # Sort and take top 3 segments per speaker
             for spk, segments in speaker_segments_map.items():
                 segments.sort(key=lambda x: x["duration"], reverse=True)
                 top_segments = segments[:3]
                 
-                best_distance = float('inf')
-                best_match = None
-                
                 for i, seg in enumerate(top_segments):
                     temp_wav = str(DATA_DIR / f"temp_golden_{spk}_{i}.wav")
-                    start = seg["start"]
-                    end = seg["end"]
+                    task_id = f"{spk}_{i}"
                     
-                    # CRITICAL: Force 16kHz mono audio for accurate Pyannote extraction
-                    subprocess.run(["ffmpeg", "-y", "-ss", str(start), "-to", str(end), "-i", wav_path, "-ac", "1", "-ar", "16000", temp_wav], 
+                    # Extract audio segment
+                    subprocess.run(["ffmpeg", "-y", "-ss", str(seg["start"]), "-to", str(seg["end"]), "-i", wav_path, "-ac", "1", "-ar", "16000", temp_wav], 
                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                     
-                    try:
-                        if os.path.exists(temp_wav):
-                            vec = engine.extract(temp_wav)
+                    if os.path.exists(temp_wav):
+                        extraction_tasks.append({"id": task_id, "path": temp_wav})
+                        task_to_speaker[task_id] = spk
+
+            # Step 2: Spawn isolated process for bulk embedding extraction
+            if extraction_tasks:
+                logging.info(f"Spawning biometric worker for {len(extraction_tasks)} segments...")
+                task_json = wav_path + ".bio_tasks.json"
+                result_json = wav_path + ".bio_results.json"
+                
+                with open(task_json, 'w') as f:
+                    json.dump(extraction_tasks, f)
+                
+                worker_script = str(BASE_DIR / "core" / "biometric_worker.py")
+                python_exe = sys.executable
+                cmd = [python_exe, worker_script, task_json, result_json, hf_token]
+                
+                worker_result = subprocess.run(cmd, capture_output=True, text=True)
+                
+                if os.path.exists(result_json):
+                    with open(result_json, 'r') as f:
+                        bio_data = json.load(f)
+                    
+                    if "results" in bio_data:
+                        embeddings = bio_data["results"]
+                        
+                        # Group results by speaker
+                        speaker_best_match = {}
+                        
+                        for task_id, vec in embeddings.items():
+                            if vec is None: continue
                             
-                            # Query ChromaDB directly with this single vector
-                            results = collection.query(
-                                query_embeddings=[vec],
-                                n_results=1
-                            )
+                            spk = task_to_speaker[task_id]
+                            
+                            # Query ChromaDB
+                            results = collection.query(query_embeddings=[vec], n_results=1)
                             
                             if results['distances'] and len(results['distances'][0]) > 0:
                                 dist = results['distances'][0][0]
-                                if dist < best_distance:
-                                    best_distance = dist
-                                    meta = results['metadatas'][0][0]
-                                    best_match = {
+                                meta = results['metadatas'][0][0]
+                                
+                                if spk not in speaker_best_match or dist < speaker_best_match[spk]["dist"]:
+                                    speaker_best_match[spk] = {
+                                        "dist": dist,
                                         "name": meta.get("name", "Unknown"),
                                         "role": meta.get("role", "")
                                     }
-                    except Exception as e:
-                        logging.error(f"Error extracting embedding for {spk} segment {i}: {e}")
-                    finally:
-                        if os.path.exists(temp_wav):
-                            os.remove(temp_wav)
-                
-                # Evaluate the best score across all 3 segments
-                if best_match:
-                    name = best_match['name']
-                    role = best_match['role']
-                    
-                    # Adjusted Tiered Logic for Cosine Distance
-                    if best_distance < 0.3:
-                        speaker_map[spk] = f"{name} ({role})" if role else name
-                        logging.info(f"High Match: {spk} -> {name} (Cosine Dist: {best_distance:.4f})")
-                    elif best_distance < 0.45:
-                        speaker_map[spk] = f"Likely {name} (Unverified)"
-                        logging.info(f"Medium Match: {spk} -> {name} (Cosine Dist: {best_distance:.4f})")
-                    else:
-                        speaker_map[spk] = f"Guest ({spk})"
-                        logging.info(f"Low/No Match for {spk}. Closest dist: {best_distance:.4f}")
+                        
+                        # Step 3: Apply tiered matching logic
+                        for spk, match in speaker_best_match.items():
+                            dist = match["dist"]
+                            name = match["name"]
+                            role = match["role"]
+                            
+                            if dist < 0.3:
+                                speaker_map[spk] = f"{name} ({role})" if role else name
+                                logging.info(f"High Match: {spk} -> {name} (Dist: {dist:.4f})")
+                            elif dist < 0.45:
+                                speaker_map[spk] = f"Likely {name} (Unverified)"
+                                logging.info(f"Med Match: {spk} -> {name} (Dist: {dist:.4f})")
+                            else:
+                                speaker_map[spk] = f"Guest ({spk})"
                 else:
+                    logging.error(f"Biometric worker failed:\n{worker_result.stderr}")
+                
+                # Cleanup temp files
+                for task in extraction_tasks:
+                    if os.path.exists(task["path"]): os.remove(task["path"])
+                if os.path.exists(task_json): os.remove(task_json)
+                if os.path.exists(result_json): os.remove(result_json)
+
+            # Fill in remaining speakers as guests
+            for track in diarization_segments:
+                spk = track["speaker"]
+                if spk not in speaker_map:
                     speaker_map[spk] = f"Guest ({spk})"
+
     except Exception as e:
         logging.error(f"Tiered Confidence Merge failed: {e}")
-    finally:
-        # Guarantee VRAM protection before Whisper
-        if 'engine' in locals():
-            engine.cleanup()
 
     # --- PHASE B: TRANSCRIPTION (WHAT & WHEN) ---
     logging.info("Starting Phase B: Faster-Whisper Transcription...")

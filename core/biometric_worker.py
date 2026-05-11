@@ -2,6 +2,7 @@ import sys
 import os
 import json
 import traceback
+import torch
 
 # Strictly prevent silent OpenMP C++ crashes
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
@@ -10,30 +11,29 @@ import warnings
 # Silence the deprecated torchaudio backend warning from pyannote.audio
 warnings.filterwarnings("ignore", category=UserWarning, module="pyannote.audio.core.io")
 
-def run_diarization(wav_path, output_json, hf_token):
+def run_extraction(input_json, output_json, hf_token):
     try:
-        import torch
-        from pyannote.audio import Pipeline
+        from core.voice_biometrics import VoiceEmbeddingEngine
         
-        has_cuda = torch.cuda.is_available()
-        
-        pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", use_auth_token=hf_token)
-        if has_cuda:
-            pipeline.to(torch.device("cuda"))
+        with open(input_json, 'r') as f:
+            tasks = json.load(f)
             
-        diarization = pipeline(wav_path)
+        engine = VoiceEmbeddingEngine()
+        results = {}
         
-        segments = []
-        # Convert Pyannote's proprietary tracks into a clean JSON serializable list
-        for turn, _, speaker in diarization.itertracks(yield_label=True):
-            segments.append({
-                "start": turn.start,
-                "end": turn.end,
-                "speaker": speaker
-            })
-            
+        for task in tasks:
+            task_id = task["id"]
+            path = task["path"]
+            if os.path.exists(path):
+                vector = engine.extract(path)
+                results[task_id] = vector
+            else:
+                results[task_id] = None
+                
+        engine.cleanup()
+        
         with open(output_json, 'w') as f:
-            json.dump(segments, f)
+            json.dump({"results": results}, f)
             
         sys.exit(0)
     except Exception as e:
@@ -43,9 +43,9 @@ def run_diarization(wav_path, output_json, hf_token):
 
 if __name__ == "__main__":
     if len(sys.argv) < 4:
-        sys.exit("Usage: python pyannote_worker.py <wav_path> <output_json> <hf_token>")
+        sys.exit("Usage: python biometric_worker.py <input_json> <output_json> <hf_token>")
         
-    wav_path = sys.argv[1]
+    input_json = sys.argv[1]
     output_json = sys.argv[2]
     hf_token = sys.argv[3]
     
@@ -55,4 +55,7 @@ if __name__ == "__main__":
     os.environ["TORCH_HOME"] = VOICE_MODEL_PATH
     os.environ["PYANNOTE_CACHE"] = VOICE_MODEL_PATH
     
-    run_diarization(wav_path, output_json, hf_token)
+    # Ensure current directory is in path for relative imports
+    sys.path.append(os.getcwd())
+    
+    run_extraction(input_json, output_json, hf_token)
