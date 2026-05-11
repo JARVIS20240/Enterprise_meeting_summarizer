@@ -24,5 +24,5 @@ Thumbs.db
 *.mp4
 *.log
 
-#  Testing file:
+# Ignore all database, audio, and temp text files in the data folder
 data/
