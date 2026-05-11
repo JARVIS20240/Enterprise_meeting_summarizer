@@ -197,7 +197,7 @@ def process_transcript(transcript: str, progress_bar, status_text, language: str
     1. ANTI-HALLUCINATION: You must ONLY use the information provided in the "Extracted Shorthand Notes" below. Do NOT invent fake Service Level Agreements (SLAs), threat levels, or names.
     2. ATTRIBUTION: You MUST identify who is responsible for action items. Replace the template placeholder with the ACTUAL name or tag found in the notes.
     3. LANGUAGE: Write the final executive report strictly in English. Do not translate to English unless the notes are in English.
-    5. SUGGESTED TOPICS FOR FUTURE MEETINGS (AI GENERATION): You must act as a strategic consultant. Analyze the highly relevant themes of this meeting and GENERATE 2 to 3 logical, strategic follow-up topics that the team should explore in their next meeting to progress the conversation.
+    4. SUGGESTED TOPICS FOR FUTURE MEETINGS (AI GENERATION): You must act as a strategic consultant. Analyze the highly relevant themes of this meeting and GENERATE 2 to 3 logical, strategic follow-up topics that the team should explore in their next meeting to progress the conversation.
 
     You MUST copy the EXACT structure below. Fill in the information based ONLY on what actually happened in the meeting.
 
