@@ -23,3 +23,6 @@ Thumbs.db
 *.mp3
 *.mp4
 *.log
+
+#  Testing file:
+data/
