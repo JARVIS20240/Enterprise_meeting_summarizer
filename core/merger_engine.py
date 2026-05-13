@@ -216,7 +216,14 @@ def transcribe_audio(wav_path: str, live_status_container=None):
     logging.info(f"Loading Whisper into {device_type.upper()} with {compute_type} precision...")
     from faster_whisper import WhisperModel
     
-    model = WhisperModel("base", device=device_type, compute_type=compute_type, cpu_threads=8, download_root=WHISPER_MODEL_PATH)
+    model = WhisperModel(
+        "base", 
+        device=device_type, 
+        compute_type=compute_type, 
+        cpu_threads=12,
+        num_workers=4,
+        download_root=WHISPER_MODEL_PATH
+    )
     
     logging.info("Executing ultra-fast transcription sequence...")
     segments, info = model.transcribe(

@@ -1,0 +1,27 @@
+Enterprise_Meeting_Summarizer/
+├── .env                          # Configuration file for environment variables and API tokens.
+├── .gitignore                    # Specifies intentionally untracked files to ignore.
+├── README.md                     # Project overview and documentation for setup and usage.
+├── requirements.txt              # List of Python dependencies required for the project environment.
+├── system_debug.log              # Centralized log file for tracking system errors and events.
+├── app/                          # Main user interface components and application logic.
+│   ├── Meeting_summary.py        # Main Streamlit UI for audio processing and summary generation.
+│   └── pages/                    # Multi-page Streamlit navigation for specialized tasks.
+│       ├── 1_Voice_Enrollment.py # Interface for enrolling new speaker voices into the database.
+│       └── 2_Database_Manager.py # Management tool for viewing and deleting speaker profiles.
+├── core/                         # Core AI processing engines and backend logic.
+│   ├── biometric_worker.py       # Isolated process for extracting voice embeddings securely.
+│   ├── merger_engine.py          # Orchestration engine for diarization, biometrics, and transcription.
+│   ├── pyannote_worker.py        # Sandboxed process for running speaker diarization patterns.
+│   └── voice_biometrics.py       # Core logic for extracting 512-D voice fingerprints.
+├── data/                         # Local storage for databases, audio artifacts, and model data.
+│   ├── DEBUG_notes_dump.txt      # Temporary file containing raw AI-generated shorthand notes.
+│   ├── file_structure.txt        # Legacy file structure mapping for reference.
+│   ├── temp_golden.wav           # Temporary audio segment used for biometric verification.
+│   └── test_meeting.wav          # Sample audio file for testing the transcription pipeline.
+├── scripts/                      # Standalone command-line utilities for manual execution.
+│   ├── run_diarization.py        # CLI script for performing speaker diarization independently.
+│   └── run_transcription.py      # CLI script for transcribing audio files using Whisper.
+└── utils/                        # Shared utility functions and helper modules.
+    ├── logs.py                   # Centralized logging configuration for debugging.
+    └── ngrok_launcher.py         # Utility for tunneling the local server to a public URL.
