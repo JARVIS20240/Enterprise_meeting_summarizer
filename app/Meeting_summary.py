@@ -167,6 +167,8 @@ def process_transcript(transcript: str, progress_bar, status_text, language: str
 
         Raw Shorthand Notes:
         """
+
+        
         stream_container = st.empty()
         notes = call_ollama_stream(WORKER_MODEL, map_prompt, keep_alive="5m", container=stream_container)
         extracted_notes.append(notes)
