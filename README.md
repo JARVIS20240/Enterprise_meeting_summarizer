@@ -122,3 +122,6 @@ Enterprise_Meeting_Summarizer/
 ├── scripts/                      # Standalone command-line utilities for manual execution.
 └── utils/                        # Shared utility functions and helper modules.
 ```
+
+---
+*Status: Verified and tested on local Streamlit environment.*
