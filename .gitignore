@@ -26,3 +26,7 @@ Thumbs.db
 
 # Ignore all database, audio, and temp text files in the data folder
 data/
+
+# Dependencies
+node_modules/
+web/
